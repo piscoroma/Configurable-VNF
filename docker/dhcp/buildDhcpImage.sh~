@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ "$#" -lt 1 ] ; then
+    echo "Error to start: usage buildDhcpImage.sh <image_name>" ;
+    exit;
+fi
+
+image_name=$1
+src_dir="../../configuration-agent"
+dst_dir="tmp"
+
+mkdir -p $dst_dir
+
+# Copy the generic agent
+cp -r $src_dir/common $dst_dir/
+cp $src_dir/start.sh $dst_dir/start.sh
+cp $src_dir/agent.py $dst_dir/agent.py
+cp $src_dir/rest_start.py $dst_dir/rest_start.py
+
+# Copy the specific agent (DHCP)
+cp -r $src_dir/dhcp $dst_dir/
+mkdir -p $dst_dir/config
+echo $'[settings]\nvnf = dhcp' >> $dst_dir/config/default-config.ini
+
+sudo docker build -t $image_name .
+
+sudo rm -r tmp
