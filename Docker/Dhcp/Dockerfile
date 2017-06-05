@@ -1,0 +1,33 @@
+FROM generic-configuration-agent
+MAINTAINER Politecnico di Torino
+
+RUN apt-get update
+RUN apt-get install -y isc-dhcp-server
+ADD sysctl.conf /etc/sysctl.conf
+
+RUN pip3 install netifaces netaddr iptools jsonschema
+
+#########################################################################
+#									#
+#			Script boot					#
+#									#
+#########################################################################
+
+#Insert template and the metadata file into the datadisk
+WORKDIR /datadisk
+ADD template.json template.json
+ADD metadata metadata
+ADD initial_configuration.json initial_configuration.json
+
+WORKDIR /configuration_agent
+RUN mkdir dhcp_server_config
+ADD dhcp_server_config dhcp_server_config
+RUN chmod +x dhcp_server_config
+
+WORKDIR / 
+ADD ./start_dhcp.sh start_dhcp.sh
+RUN chmod +x start_dhcp.sh
+ADD ./start_dhcp_agent.sh start_dhcp_agent.sh
+RUN chmod +x start_dhcp_agent.sh
+ADD ./start.sh start.sh
+RUN chmod +x ./start.sh
