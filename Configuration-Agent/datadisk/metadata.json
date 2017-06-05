@@ -1,6 +1,0 @@
-{
-"tenant-id" : "a",
-"graph-id" : "001",
-"vnf-id" : "dhcp_id",
-"broker-url" : "tcp://127.0.0.1:5555"
-}
